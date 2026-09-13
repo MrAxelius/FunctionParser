@@ -28,7 +28,6 @@ struct ErrorParentesis : std::runtime_error
 };
 struct ErrorDeNodos : std::runtime_error
 {
-    size_t posicion;
     ErrorDeNodos(const std::string &mensaje)
         : std::runtime_error(mensaje) {}
 };
@@ -36,4 +35,10 @@ struct ErrorEnDesarrollo : std::runtime_error
 {
     ErrorEnDesarrollo(const std::string &mensaje)
         : std::runtime_error(mensaje) {}
+};
+struct ErrorNumerico : std::runtime_error
+{
+    size_t posicion;
+    ErrorNumerico(const std::string &mensaje, size_t posicion)
+        : std::runtime_error(mensaje), posicion(posicion) {}
 };
