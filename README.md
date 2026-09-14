@@ -9,15 +9,19 @@ El principal objetivo es aprender el diseño de APIs y librerías, así como ser
 
 ## Estado actual
 - Hace un análisis léxico y sintáctico de las expresiones
-- Construye un AST con precedencia y los operadores básicos (+, -, *, /) y precedencia de operadores
+- Construye un AST con precedencia, los operadores básicos (+, -, *, /) y funciones
 - Números, constantes (pi, e) y paréntesis funcionales.
+- Evaluación recursiva de las expresiones
 
 ## Aún en desarrollo:
-- Evaluación de las expresiones
-- Parsing de funciones predefinidas
+- Muestreo sobre rangos
+- Fachada pública de la librería
 
 ## Ejemplos de sintaxis de las expresiones esperadas:
-"pi + e - 10"
+´´´
+pi + e - 10
+´´´
+
 Las funciones están diseñadas para funcionar así:
 
 ```
