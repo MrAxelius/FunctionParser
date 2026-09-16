@@ -70,8 +70,6 @@ namespace
             return Token(TokenType::ABRE_PARENTESIS, posicion);
         case ')':
             return Token(TokenType::CIERRA_PARENTESIS, posicion);
-        case '=':
-            return Token(TokenType::IGUALDAD, posicion);
         default:
             throw ErrorLexico("No es un caracter especial esperado", posicion);
         }
@@ -84,7 +82,6 @@ namespace
         {"sin", TokenType::SIN},
         {"cos", TokenType::COS},
         {"tan", TokenType::TAN},
-        {"exp", TokenType::EXP},
         {"log", TokenType::LOG},
         {"pow", TokenType::POW},
         {"nrt", TokenType::NRT}};

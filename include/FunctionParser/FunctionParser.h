@@ -1,10 +1,8 @@
 #pragma once
 // Archivo maestro para el contrato público
+#include <FunctionParser/Expression.h> // La clase principal (depende de las anteriores)
 #include <FunctionParser/Sample.h>
-#include <FunctionParser/Range.h>        // Estructuras de entrada (Range2D, Range3D)
-#include <FunctionParser/Expression.h>   // La clase principal (depende de las anteriores)
-
-namespace FunctionParser = FunctionParser::v1;
+#include <FunctionParser/Range.h> // Estructuras de entrada (Range2D, Range3D)
 
 // Compilación condicional, por si crece y versiona
 #define MATH_EVAL_VERSION_MAJOR 1

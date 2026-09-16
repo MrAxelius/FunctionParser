@@ -7,6 +7,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+if(MSVC)
+    add_compile_options(/utf-8 /W4)
+else()
+    add_compile_options(-Wall -Wextra)
+endif()
+
 # Opciones de build
 option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(BUILD_TESTS "Build tests" ON)
@@ -43,8 +49,12 @@ if(BUILD_TESTS)
         GIT_TAG v3.7.1
     )
     FetchContent_MakeAvailable(Catch2)
-    
-    add_executable(parser_tests tests/test_lexer.cpp tests/test_parser.cpp)
+
+    add_executable(parser_tests
+        tests/test_lexer.cpp
+        tests/test_parser.cpp
+        tests/test_evaluador.cpp
+    )
     target_link_libraries(parser_tests PRIVATE FunctionParser Catch2::Catch2WithMain)
     target_include_directories(parser_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 

@@ -62,7 +62,6 @@ namespace
         case TokenType::SIN:
         case TokenType::COS:
         case TokenType::TAN:
-        case TokenType::EXP:
             return 1;
 
         default:

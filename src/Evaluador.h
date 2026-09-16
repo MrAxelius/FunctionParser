@@ -4,11 +4,15 @@
 #include "Token.h"
 #include "Excepciones.h"
 
+#include <optional>
 #include <cmath>
+#include <memory>
 
 namespace Evaluador
 {
-    double evaluacionRecursiva(const Nodo &nodo, double x)
+    // Asumir que el Shunting yard funciona, y devuelve los nodos bien, así no revisar los hijos
+    // La invarianza es correcta en el algoritmo, que solo genera nodos válidos, así que aquí no hay que revisar.
+    std::optional<double> evaluacionRecursiva(const Nodo &nodo, double x)
     {
         // Es necesario el * para acceder al objeto entero y desreferenciarlo
         // no necesita () porque es el operando de menor preferencia
@@ -18,63 +22,131 @@ namespace Evaluador
             return nodo.token.getValorNumerico();
         case TokenType::VARIABLE:
             return x;
-
         case TokenType::SIN:
-            return std::sin(evaluacionRecursiva(*nodo.hijos[0], x));
-        case TokenType::COS:
-            return std::cos(evaluacionRecursiva(*nodo.hijos[0], x));
-        case TokenType::TAN:
-            return std::tan(evaluacionRecursiva(*nodo.hijos[0], x));
+        {
+            auto arg = evaluacionRecursiva(*nodo.hijos[0], x);
+            if (!arg)
+                return std::nullopt;
 
+            return std::sin(*arg);
+        }
+        case TokenType::COS:
+        {
+            auto arg = evaluacionRecursiva(*nodo.hijos[0], x);
+            if (!arg)
+                return std::nullopt;
+
+            return std::cos(*arg);
+        }
+        case TokenType::TAN:
+        {
+            auto arg = evaluacionRecursiva(*nodo.hijos[0], x);
+            if (!arg)
+                return std::nullopt;
+
+            return std::tan(*arg);
+        }
         case TokenType::POW:
-            return std::pow(evaluacionRecursiva(*nodo.hijos[0], x), evaluacionRecursiva(*nodo.hijos[1], x));
+        {
+            assert(nodo.hijos.size() == 2);
+            auto base = evaluacionRecursiva(*nodo.hijos[0], x);
+            auto exponente = evaluacionRecursiva(*nodo.hijos[1], x);
+
+            if (!base || !exponente)
+            {
+                return std::nullopt;
+            }
+
+            return std::pow(*base, *exponente);
+        }
         case TokenType::NRT:
         {
-            double radicando = evaluacionRecursiva(*nodo.hijos[0], x);
-            double indice = evaluacionRecursiva(*nodo.hijos[1], x);
-            if (radicando < 0 || indice == 0)
+            assert(nodo.hijos.size() == 2);
+            auto radicando = evaluacionRecursiva(*nodo.hijos[0], x);
+            auto indice = evaluacionRecursiva(*nodo.hijos[1], x);
+            if (!radicando || !indice)
             {
-                throw ErrorNumerico("Hay un valor inesperado en la raiz", nodo.token.posicion);
+                return std::nullopt;
             }
-            return std::pow(radicando, 1.0 / indice);
+            // Negar todo radicando negativo, incluso impares, cuando debería ser válido
+            // No descarto soportarlo más adelante, ahora es por simplicidad de diseño
+            if (*radicando < 0 || *indice == 0)
+            {
+                return std::nullopt;
+            }
+            return std::pow(*radicando, 1.0 / *indice);
         }
 
         case TokenType::LOG:
         {
-            double argumento = evaluacionRecursiva(*nodo.hijos[0], x);
-            double base = evaluacionRecursiva(*nodo.hijos[1], x);
-            if (base <= 0)
+            assert(nodo.hijos.size() == 2);
+            auto argumento = evaluacionRecursiva(*nodo.hijos[0], x);
+            auto base = evaluacionRecursiva(*nodo.hijos[1], x);
+            if (!base || !argumento)
             {
-                throw ErrorNoEsValorEsperado("La base del logaritmo es cero o negativa", nodo.token.posicion);
+                return std::nullopt;
             }
-            if (base == 1)
+            if (*base <= 0 || *base == 1)
             {
-                throw ErrorNoEsValorEsperado("Ningun exponente de 1 da un valor válido", nodo.token.posicion);
+                return std::nullopt;
             }
-            if (argumento <= 0)
+
+            if (*argumento <= 0)
             {
-                throw ErrorNoEsValorEsperado("El argumento del logaritmo es cero o negativo", nodo.token.posicion);
+                return std::nullopt;
             }
-            return (std::log(argumento) / std::log(base));
+            return (std::log(*argumento) / std::log(*base));
         }
         case TokenType::ADD:
-            return evaluacionRecursiva(*nodo.hijos[0], x) + evaluacionRecursiva(*nodo.hijos[1], x);
+        {
+            assert(nodo.hijos.size() == 2);
+            auto arg1 = evaluacionRecursiva(*nodo.hijos[0], x);
+            auto arg2 = evaluacionRecursiva(*nodo.hijos[1], x);
+            if (!arg1 || !arg2)
+            {
+                return std::nullopt;
+            }
+            return *arg1 + *arg2;
+        }
 
         case TokenType::SUB:
-            return evaluacionRecursiva(*nodo.hijos[0], x) - evaluacionRecursiva(*nodo.hijos[1], x);
-
+        {
+            assert(nodo.hijos.size() == 2);
+            auto arg1 = evaluacionRecursiva(*nodo.hijos[0], x);
+            auto arg2 = evaluacionRecursiva(*nodo.hijos[1], x);
+            if (!arg1 || !arg2)
+            {
+                return std::nullopt;
+            }
+            return *arg1 - *arg2;
+        }
         case TokenType::DIVIDE:
         {
-            double divisor = evaluacionRecursiva(*nodo.hijos[1], x);
-            if(divisor == 0){
-                throw ErrorNoEsValorEsperado("No se puede dividir por cero", nodo.token.posicion);
+            assert(nodo.hijos.size() == 2);
+            auto divisor = evaluacionRecursiva(*nodo.hijos[1], x);
+            auto dividendo = evaluacionRecursiva(*nodo.hijos[0], x);
+            if (!dividendo)
+            {
+                return std::nullopt;
             }
-            return evaluacionRecursiva(*nodo.hijos[0], x) / divisor;
+            if (!divisor || *divisor == 0)
+            {
+                return std::nullopt;
+            }
+            return *dividendo / *divisor;
         }
 
         case TokenType::MULT:
-            return evaluacionRecursiva(*nodo.hijos[0], x) * evaluacionRecursiva(*nodo.hijos[1], x);
-
+        {
+            assert(nodo.hijos.size() == 2);
+            auto arg1 = evaluacionRecursiva(*nodo.hijos[0], x);
+            auto arg2 = evaluacionRecursiva(*nodo.hijos[1], x);
+            if (!arg1 || !arg2)
+            {
+                return std::nullopt;
+            }
+            return (*arg1) * (*arg2);
+        }
         default:
             throw ErrorEnDesarrollo("Algo ha salido mal al evaluar la función");
         }
@@ -86,6 +158,4 @@ namespace Evaluador
 4  *
     |\
     3 2
-
-
 */

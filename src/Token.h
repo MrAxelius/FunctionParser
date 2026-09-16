@@ -9,19 +9,17 @@
 enum class TokenType
 {
     // OPERADORES
-    IGUALDAD = 0,
     ADD,
     SUB,
     MULT,
     DIVIDE,
-    // Por el momento 1-4
+    // Por el momento 0-3
     POW,
     NRT,
     SIN,
     COS,
     TAN,
-    EXP,
-    LOG, // 11
+    LOG, // 10
     // FIN OPERADORES
 
     ABRE_PARENTESIS,
