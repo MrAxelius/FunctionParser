@@ -4,7 +4,7 @@
 #include "Lexer/Lexer.h"
 #include "Parser/Parser.h"
 
-TEST_CASE("Prueba de los paréntesis")
+TEST_CASE("Prueba de los parentesis")
 {
     auto tokens = Lexer::Tokenizar("pi + (e - 1)");
     auto nodo = Parser::ShuntingYard(tokens);
@@ -15,7 +15,7 @@ TEST_CASE("Prueba de los paréntesis")
     CHECK(nodo->hijos[1]->hijos[1]->token.getValorNumerico() == 1);
 }
 
-TEST_CASE("Precedencia sin paréntesis")
+TEST_CASE("Precedencia sin parentesis")
 {
     auto tokens = Lexer::Tokenizar("3 + 4 * 2");
     auto nodo = Parser::ShuntingYard(tokens);

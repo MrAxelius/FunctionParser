@@ -1,23 +1,13 @@
 #pragma once
 
-#include <vector>
-
-namespace FunctionParser::v1
+namespace FunctionParser::inline v1
 {
 
     struct Punto2D
     {
-        double x;
-        double y;
-        double valor;
-    };
-
-    struct Punto3D
-    {
-        double x;
-        double y;
-        double z;
-        double valor;
+        // Si y no es un punto finito (NaN / +- inf) no se evalua
+        double x = 0.0;
+        double y = 0.0;
     };
 
 }
