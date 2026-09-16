@@ -3,10 +3,11 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <optional>
 
 // Componentes públicos de la librería
 #include <FunctionParser/Sample.h>
-#include <FunctionParser/Range.h>
+#include <FunctionParser/Rango.h>
 
 namespace FunctionParser
 {
@@ -25,19 +26,13 @@ namespace FunctionParser
             // Habilitar movimiento (eficiente)
             Expression(Expression &&) noexcept;
             Expression &operator=(Expression &&) noexcept;
-            [[nodiscard]] double eval(double x, double y) const;
-            [[nodiscard]] double eval(double x, double y, double z) const;
-            [[nodiscard]] std::vector<Punto2D> evaluateMesh(const Rango2D &rango) const;
-            [[nodiscard]] std::vector<Punto3D> evaluateMesh(const Rango3D &rango) const;
-            [[nodiscard]] std::string dependentVariable() const;
+            [[nodiscard]] std::optional<double> eval(double x) const;
+            [[nodiscard]] std::vector<Punto> evaluateMesh(const Rango &rango) const;
 
         private:
             struct Impl;
             std::unique_ptr<Impl> pImpl;
         };
-
-        [[nodiscard]] std::vector<Punto2D> evaluate_2d(const std::string &input, const Rango2D &rango);
-        [[nodiscard]] std::vector<Punto3D> evaluate_3d(const std::string &input, const Rango3D &rango);
-
+        [[nodiscard]] std::vector<Punto> evaluate(const std::string &input, const Rango &rango);
     }
 }
