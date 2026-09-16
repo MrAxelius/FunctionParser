@@ -1,6 +1,6 @@
 # FUNCTION-PARSER
 
-## WORK IN PROGRESS
+## WORK IN PROGRESS -- NOT FUNCTIONAL YET
 
 ## Descripción
 Librería en C++20 destinada a la evaluación de funciones matemáticas.
