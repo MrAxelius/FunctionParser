@@ -1,13 +1,15 @@
 #pragma once
 
-namespace FunctionParser::inline v1
+namespace FunctionParser
 {
-
-    struct Punto2D
+    inline namespace v1
     {
-        // Si y no es un punto finito (NaN / +- inf) no se evalua
-        double x = 0.0;
-        double y = 0.0;
-    };
+        struct Punto
+        {
+            // Si y no es un punto finito (NaN / +- inf) no se evalua
+            double x = 0.0;
+            double y = 0.0;
+        };
 
+    }
 }

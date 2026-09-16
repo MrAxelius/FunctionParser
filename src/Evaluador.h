@@ -7,12 +7,13 @@
 #include <optional>
 #include <cmath>
 #include <memory>
+#include <cassert>
 
 namespace Evaluador
 {
     // Asumir que el Shunting yard funciona, y devuelve los nodos bien, así no revisar los hijos
     // La invarianza es correcta en el algoritmo, que solo genera nodos válidos, así que aquí no hay que revisar.
-    std::optional<double> evaluacionRecursiva(const Nodo &nodo, double x)
+    inline std::optional<double> evaluacionRecursiva(const Nodo &nodo, double x)
     {
         // Es necesario el * para acceder al objeto entero y desreferenciarlo
         // no necesita () porque es el operando de menor preferencia
