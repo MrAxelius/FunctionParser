@@ -54,6 +54,7 @@ if(BUILD_TESTS)
         tests/test_lexer.cpp
         tests/test_parser.cpp
         tests/test_evaluador.cpp
+        tests/test_muestreo.cpp
     )
     target_link_libraries(parser_tests PRIVATE FunctionParser Catch2::Catch2WithMain)
     target_include_directories(parser_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
