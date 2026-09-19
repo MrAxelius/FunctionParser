@@ -1,6 +1,7 @@
 # FUNCTION-PARSER
 
-## WORK IN PROGRESS -- NOT FUNCTIONAL YET
+## WORK IN PROGRESS
+## BASIC FUNCTIONALITY 
 
 ## Descripción
 Librería en C++20 destinada a la evaluación de funciones matemáticas.
@@ -14,8 +15,8 @@ El principal objetivo es aprender el diseño de APIs y librerías, así como ser
 - Evaluación recursiva de las expresiones
 
 ## Aún en desarrollo:
-- Muestreo sobre rangos
-- Fachada pública de la librería
+- Excepciones
+- Menos unario
 
 ## Ejemplos de sintaxis de las expresiones esperadas:
 ´´´
