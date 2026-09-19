@@ -16,12 +16,13 @@ endif()
 # Opciones de build
 option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(BUILD_TESTS "Build tests" ON)
-option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_EXAMPLES "Build examples" ON)
 
 # Biblioteca principal
 add_library(FunctionParser
     src/Lexer/Lexer.cpp
     src/Parser/Parser.cpp
+    src/Expression.cpp
 )
 
 # Directorios de inclusión públicos
