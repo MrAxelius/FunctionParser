@@ -1,5 +1,7 @@
 #pragma once
 
+#include <limits>
+
 namespace FunctionParser
 {
     inline namespace v1

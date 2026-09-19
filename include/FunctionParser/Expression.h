@@ -8,6 +8,7 @@
 // Componentes públicos de la librería
 #include <FunctionParser/Sample.h>
 #include <FunctionParser/Rango.h>
+#include <FunctionParser/Excepciones.h>
 
 namespace FunctionParser
 {
@@ -26,6 +27,8 @@ namespace FunctionParser
             // Habilitar movimiento (eficiente)
             Expression(Expression &&) noexcept;
             Expression &operator=(Expression &&) noexcept;
+            
+            // pImpl not null assumed as precondition
             [[nodiscard]] std::optional<double> eval(double x) const;
             [[nodiscard]] std::vector<Punto> evaluateMesh(const Rango &rango) const;
 
@@ -33,6 +36,5 @@ namespace FunctionParser
             struct Impl;
             std::unique_ptr<Impl> pImpl;
         };
-        [[nodiscard]] std::vector<Punto> evaluate(const std::string &input, const Rango &rango);
     }
 }

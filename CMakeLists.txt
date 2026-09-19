@@ -16,12 +16,13 @@ endif()
 # Opciones de build
 option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(BUILD_TESTS "Build tests" ON)
-option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_EXAMPLES "Build examples" ON)
 
 # Biblioteca principal
 add_library(FunctionParser
     src/Lexer/Lexer.cpp
     src/Parser/Parser.cpp
+    src/Expression.cpp
 )
 
 # Directorios de inclusión públicos
@@ -54,6 +55,7 @@ if(BUILD_TESTS)
         tests/test_lexer.cpp
         tests/test_parser.cpp
         tests/test_evaluador.cpp
+        tests/test_muestreo.cpp
     )
     target_link_libraries(parser_tests PRIVATE FunctionParser Catch2::Catch2WithMain)
     target_include_directories(parser_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
