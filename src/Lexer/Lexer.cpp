@@ -114,12 +114,12 @@ namespace
         {
             return Token(std::numbers::e, start);
         }
-        if (palabra == "x" || palabra == "y" || palabra == "z")
+        if (palabra == "x")
         {
             return Token(palabra[0], start);
         }
         
-        throw ErrorLexico("La función no está definida", start);
+        throw ErrorLexico("Identificador desconocido", start);
     }
 }
 namespace Lexer

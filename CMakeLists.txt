@@ -16,7 +16,7 @@ endif()
 # Opciones de build
 option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(BUILD_TESTS "Build tests" ON)
-option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_EXAMPLES "Build examples" OFF)
 
 # Biblioteca principal
 add_library(FunctionParser

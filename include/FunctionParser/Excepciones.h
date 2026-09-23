@@ -19,10 +19,10 @@ namespace FunctionParser
             explicit RangeError(const std::string &message)
                 : LibraryException(message) {}
         };
-        struct ExpersionError : LibraryException
+        struct ExpressionError : LibraryException
         {
             size_t position;
-            explicit ExpersionError(const std::string &message, size_t position)
+            explicit ExpressionError(const std::string &message, size_t position)
                 : LibraryException(message), position(position) {}
         };
     }
