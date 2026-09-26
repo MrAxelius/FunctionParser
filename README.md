@@ -20,7 +20,6 @@ un visor de funciones.
 
 ### Pendiente
 
-- Menos unario (`-x`, `2 * -3`).
 - Traducción de excepciones internas a la jerarquía pública.
 - Funciones de dos y tres variables: no implementado. La versión `v1` cubre
   una sola variable.
