@@ -54,3 +54,13 @@ TEST_CASE("Funciones anidadas")
     CHECK(nodo->hijos[0]->hijos[1]->token.getValorNumerico() == 4);
     CHECK(nodo->hijos[0]->hijos[0]->token.getValorNumerico() == std::numbers::e);
 }
+TEST_CASE("Comprobar la desapilacion dinamica")
+{
+    auto token = Lexer::Tokenizar("2 sin 4");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Seno con solo negacion")
+{
+    auto token = Lexer::Tokenizar("sin(-)");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));   
+}

@@ -64,8 +64,6 @@ namespace
         {
         case ',':
             return Token(TokenType::COMA, posicion);
-        case ';':
-            return Token(TokenType::FIN_SECUENCIA, posicion);
         case '(':
             return Token(TokenType::ABRE_PARENTESIS, posicion);
         case ')':
@@ -148,7 +146,7 @@ namespace Lexer
                 tokens.push_back(tokenSimbolo(c, i));
                 ++i;
             }
-            else if (c == '(' || c == ')' || c == ',' || c == ';')
+            else if (c == '(' || c == ')' || c == ',')
             {
                 tokens.push_back(tokenCaracterEspecial(c, i));
                 ++i;

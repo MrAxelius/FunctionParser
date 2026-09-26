@@ -31,6 +31,14 @@ namespace Evaluador
 
             return std::sin(*arg);
         }
+        case TokenType::NEGACION:
+        {
+            auto arg = evaluacionRecursiva(*nodo.hijos[0], x);
+            if (!arg)
+                return std::nullopt;
+
+            return -(*arg);
+        }
         case TokenType::COS:
         {
             auto arg = evaluacionRecursiva(*nodo.hijos[0], x);

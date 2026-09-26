@@ -45,6 +45,8 @@ namespace
             return 2;
         case TokenType::DIVIDE: // /
             return 2;
+        case TokenType::NEGACION:
+            return 3;
         default:
             throw ErrorDeFormato("Hay un problema con la expresión", token.posicion);
         }
@@ -57,11 +59,16 @@ namespace
         case TokenType::POW:
         case TokenType::NRT:
         case TokenType::LOG:
+        case TokenType::ADD:
+        case TokenType::SUB:
+        case TokenType::MULT:
+        case TokenType::DIVIDE:
             return 2;
 
         case TokenType::SIN:
         case TokenType::COS:
         case TokenType::TAN:
+        case TokenType::NEGACION:
             return 1;
 
         default:
@@ -89,10 +96,13 @@ namespace Parser
         std::stack<std::unique_ptr<Nodo>> pilaOperandos;
         std::stack<int> pilaComas;
 
+        bool esperarOperando = true;
+
         for (const auto &elemento : tokens)
         {
             if (elemento.tipo == TokenType::ABRE_PARENTESIS)
             {
+                esperarOperando = true;
                 if (!pilaOperadores.empty() && esFuncion(pilaOperadores.top()))
                 {
                     pilaComas.push(1);
@@ -103,8 +113,9 @@ namespace Parser
             {
                 while (!pilaOperadores.empty() && pilaOperadores.top().tipo != TokenType::ABRE_PARENTESIS)
                 {
-                    desapilarOperador(pilaOperadores, pilaOperandos, 2);
+                    desapilarOperador(pilaOperadores, pilaOperandos, aridad(pilaOperadores.top()));
                 }
+                esperarOperando = false;
                 // Eliminar el paréntesis de apertura
                 if (pilaOperadores.empty())
                     throw ErrorParentesis("Hay un desbalance en los paréntesis de apertura", elemento.posicion);
@@ -128,27 +139,36 @@ namespace Parser
             else if (elemento.tipo >= TokenType::POW && elemento.tipo <= TokenType::LOG)
             {
                 pilaOperadores.push(elemento);
+                esperarOperando = true;
             }
             else if (elemento.tipo == TokenType::COMA)
             {
+                esperarOperando = true;
                 if (pilaOperadores.empty())
                 {
                     throw ErrorParentesis("Hay una coma que no corresponde", elemento.posicion);
                 }
                 while (!pilaOperadores.empty() && pilaOperadores.top().tipo != TokenType::ABRE_PARENTESIS)
                 {
-                    desapilarOperador(pilaOperadores, pilaOperandos, 2);
+                    desapilarOperador(pilaOperadores, pilaOperandos, aridad(pilaOperadores.top()));
                 }
-                if(pilaComas.empty()){
+                if (pilaComas.empty())
+                {
                     throw ErrorDeFormato("Coma inesperada en la expresion", elemento.posicion);
                 }
                 pilaComas.top() += 1;
             }
+            else if(elemento.tipo == TokenType::SUB && esperarOperando){
+                Token tokenSub(TokenType::NEGACION, elemento.posicion);
+                pilaOperadores.push(tokenSub);
+                esperarOperando = true;
+            }
             else if (elemento.tipo >= TokenType::ADD && elemento.tipo <= TokenType::DIVIDE) // Esto son los operadores
             {
+                esperarOperando = true;
                 while (!pilaOperadores.empty() && pilaOperadores.top().tipo != TokenType::ABRE_PARENTESIS && prioridad(pilaOperadores.top()) >= prioridad(elemento))
                 {
-                    desapilarOperador(pilaOperadores, pilaOperandos, 2);
+                    desapilarOperador(pilaOperadores, pilaOperandos, aridad(pilaOperadores.top()));
                 }
                 pilaOperadores.push(elemento);
             }
@@ -156,23 +176,24 @@ namespace Parser
             {
                 auto nodo = std::make_unique<Nodo>(elemento, nullptr, nullptr);
                 pilaOperandos.push(std::move(nodo));
+                esperarOperando = false;
             }
         }
         while (!pilaOperadores.empty())
         {
             if (pilaOperadores.top().tipo == TokenType::ABRE_PARENTESIS)
                 throw ErrorParentesis("Hay un paréntesis sin cerrar", pilaOperadores.top().posicion);
-            desapilarOperador(pilaOperadores, pilaOperandos, 2);
+            desapilarOperador(pilaOperadores, pilaOperandos, aridad(pilaOperadores.top()));
         }
         if (pilaOperandos.empty())
         {
-            throw ErrorDeNodos("Hay operandos incorrectos");
+            throw ErrorDeNodos("Faltan operandos");
         }
         auto ultimoElemento = std::move(pilaOperandos.top());
         pilaOperandos.pop();
         if (!pilaOperandos.empty())
         {
-            throw ErrorDeNodos("Hay operandos incorrectos");
+            throw ErrorDeNodos("Sobran operandos");
         }
         return ultimoElemento;
     }
