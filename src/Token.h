@@ -20,6 +20,7 @@ enum class TokenType
     COS,
     TAN,
     LOG, // 10
+    NEGACION,
     // FIN OPERADORES
 
     ABRE_PARENTESIS,
@@ -27,8 +28,6 @@ enum class TokenType
     COMA,
     VARIABLE,
     NUMERO,
-    FIN_SECUENCIA
-    // En el readme, hay que acabar con ';'
 };
 
 struct Token

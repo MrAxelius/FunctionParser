@@ -71,3 +71,52 @@ TEST_CASE("Propagacion de valores erroneos")
     auto valor = Evaluador::evaluacionRecursiva(*nodo, 5.0);
     CHECK(!valor);
 }
+TEST_CASE("Negacion de valores")
+{
+    auto tokens = Lexer::Tokenizar("-5");
+    auto nodo = Parser::ShuntingYard(tokens);
+    auto valor = Evaluador::evaluacionRecursiva(*nodo, 5.0);
+    REQUIRE(valor == -5);
+}
+TEST_CASE("Doble negacion de valores")
+{
+    auto tokens = Lexer::Tokenizar("- -5");
+    auto nodo = Parser::ShuntingYard(tokens);
+    auto valor = Evaluador::evaluacionRecursiva(*nodo, 5.0);
+    REQUIRE(valor == 5);
+}
+TEST_CASE("Multiplicar por negativo")
+{    
+    auto tokens = Lexer::Tokenizar("3 * -5");
+    auto nodo = Parser::ShuntingYard(tokens);
+    auto valor = Evaluador::evaluacionRecursiva(*nodo, 5.0);
+    REQUIRE(valor == -15);
+}
+TEST_CASE("La resta no esta rota")
+{
+    auto tokens = Lexer::Tokenizar("3 - 2 - 1");
+    auto nodo = Parser::ShuntingYard(tokens);
+    auto valor = Evaluador::evaluacionRecursiva(*nodo, 5.0);
+    REQUIRE(valor == 0);    
+}
+TEST_CASE("Multiplicacion y negacion")
+{
+    auto tokens = Lexer::Tokenizar("-x * x");
+    auto nodo = Parser::ShuntingYard(tokens);
+    auto valor = Evaluador::evaluacionRecursiva(*nodo, 5.0);
+    REQUIRE(valor == -25);       
+}
+TEST_CASE("Seno negativo")
+{
+    auto tokens = Lexer::Tokenizar("sin(-x)");
+    auto nodo = Parser::ShuntingYard(tokens);
+    auto valor = Evaluador::evaluacionRecursiva(*nodo, 2.0);
+    REQUIRE(valor == Catch::Approx(-0.909297));     
+}
+TEST_CASE("Resta con negacion")
+{
+    auto tokens = Lexer::Tokenizar("3 - -2");
+    auto nodo = Parser::ShuntingYard(tokens);
+    auto valor = Evaluador::evaluacionRecursiva(*nodo, 5.0);
+    REQUIRE(valor == 5);     
+}
