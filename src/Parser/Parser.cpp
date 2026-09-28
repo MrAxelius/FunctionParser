@@ -187,13 +187,13 @@ namespace Parser
         }
         if (pilaOperandos.empty())
         {
-            throw ErrorDeNodos("Faltan operandos");
+            throw ErrorDeNodos("Faltan operandos", 0);
         }
         auto ultimoElemento = std::move(pilaOperandos.top());
         pilaOperandos.pop();
         if (!pilaOperandos.empty())
         {
-            throw ErrorDeNodos("Sobran operandos");
+            throw ErrorDeNodos("Sobran operandos", tokens.back().posicion);
         }
         return ultimoElemento;
     }

@@ -38,7 +38,7 @@ add_library(FunctionParser::FunctionParser ALIAS FunctionParser)
 
 if(BUILD_EXAMPLES)
     add_executable(parser_cli examples/example_cli.cpp)
-    target_link_libraries(parser_cli PRIVATE FunctionParser)
+    target_link_libraries(parser_cli PRIVATE FunctionParser::FunctionParser)
 endif()
 
 # Para el catch2
@@ -51,6 +51,7 @@ if(BUILD_TESTS)
     )
     FetchContent_MakeAvailable(Catch2)
 
+    # Tests internos: ven src/, prueban las capas por dentro
     add_executable(parser_tests
         tests/test_lexer.cpp
         tests/test_parser.cpp
@@ -60,9 +61,17 @@ if(BUILD_TESTS)
     target_link_libraries(parser_tests PRIVATE FunctionParser Catch2::Catch2WithMain)
     target_include_directories(parser_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+    # Tests de la API pública: SIN src/ en la ruta de inclusión, a propósito.
+    # Solo pueden ver lo que ve un consumidor de la biblioteca.
+    add_executable(api_tests
+        tests/test_api_publica.cpp
+    )
+    target_link_libraries(api_tests PRIVATE FunctionParser::FunctionParser Catch2::Catch2WithMain)
+
     include(CTest)
     include(Catch)
     catch_discover_tests(parser_tests)
+    catch_discover_tests(api_tests)
 endif()
 
 install(DIRECTORY include/ DESTINATION include)
