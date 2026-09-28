@@ -12,7 +12,7 @@ namespace FunctionParser
         struct LibraryException : std::runtime_error
         {
             explicit LibraryException(const std::string &message)
-                : std::runtime_error(message) {}
+                : std::runtime_error(message)  {}
         };
         struct RangeError : LibraryException
         {

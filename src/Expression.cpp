@@ -1,5 +1,6 @@
 #include <FunctionParser/Expression.h>
 #include <memory>
+#include <iostream>
 
 #include "Nodo.h"
 #include "Parser/Parser.h"
@@ -20,7 +21,7 @@ namespace FunctionParser
         {
             auto tokens = Lexer::Tokenizar(input);
             auto nodo = Parser::ShuntingYard(tokens);
-            this->pImpl = std::make_unique<Impl>(std::move(nodo));
+            this->pImpl = std::make_unique<Impl>(std::move(nodo));                          
         }
 
         Expression::~Expression() = default;
