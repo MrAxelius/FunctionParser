@@ -1,55 +1,110 @@
 # FunctionParser
 
-> **Work in progress.** Funcionalidad básica operativa.
+A C++20 library for parsing and evaluating single-variable mathematical
+expressions.
 
-Librería en C++20 para el análisis y la evaluación de funciones matemáticas
-de una variable.
+The main goal is learning API and library design. It also serves as a component
+of [Function-render](https://github.com/MrAxelius/Function-render), a function
+viewer.
 
-El objetivo principal es aprender diseño de APIs y de librerías. Sirve además
-como componente de [Function-render](https://github.com/MrAxelius/Function-render),
-un visor de funciones.
+## Features
 
-## Estado actual
+- Lexical and syntactic analysis with positioned errors.
+- AST construction with operator precedence, basic operators (`+`, `-`, `*`, `/`)
+  and functions.
+- Unary minus, numbers, constants (`pi`, `e`), parentheses and nested functions.
+- Recursive evaluation and sampling over a range.
+- Public facade using pImpl, versioned through an `inline namespace`.
+- Public exception hierarchy: a single `catch` covers everything, or you can
+  catch the specific error and read its position.
 
-- Análisis léxico y sintáctico con errores posicionados.
-- Construcción de un AST con precedencia, operadores básicos (`+`, `-`, `*`, `/`)
-  y funciones.
-- Números, constantes (`pi`, `e`), paréntesis y anidamiento de funciones.
-- Evaluación recursiva y muestreo sobre un rango.
-- Fachada pública con pImpl y versionado mediante `inline namespace`.
+### Not implemented
 
-### Pendiente
+- Two- and three-variable functions. `v1` covers a single variable.
+- Scientific notation (`1e3`).
 
-- Funciones de dos y tres variables: no implementado. La versión `v1` cubre
-  una sola variable.
+## Usage
 
-## Sintaxis
+```cpp
+#include <FunctionParser/FunctionParser.h>
 
-Ejemplo de expresión válida:
+FunctionParser::Expression expression("x*x");
+
+auto value = expression.eval(2.0);          // std::optional<double> -> 4
+auto points = expression.evaluateFunction({0.0, 10.0, 5});   // 6 points
+```
+
+## Syntax
+
+A valid expression:
 pi + e - 10
 
-Funciones disponibles:
-- pow(base, exponente) = base ^ exponente
-- log(argumento, base) = log_base(argumento)
-- nrt(radicando, indice) = raíz de índice n sobre el radicando
+
+Available functions:
+- pow(base, exponent) = base ^ exponent
+- log(argument, base) = log_base(argument)
+- nrt(radicand, index) = the index-th root of the radicand
 - sin(x) / cos(x) / tan(x)
 
 
-## Valores no evaluables
+## Non-evaluable values
 
-Cuando la función no tiene valor en un punto —división por cero, logaritmo
-de un argumento no positivo, raíz de radicando negativo— el muestreo devuelve
-igualmente el punto, con la coordenada `y` marcada como `NaN`. El vector
-siempre contiene `pasos + 1` elementos, de modo que el índice se corresponde
-con la posición en el eje.
+When the function has no value at a point — division by zero, logarithm of a
+non-positive argument, root of a negative radicand — sampling still returns the
+point, with its `y` coordinate set to `NaN`. Overflow yields `±inf`. The vector
+always holds `steps + 1` elements, so the index matches the position along the
+axis.
 
-Es responsabilidad del consumidor comprobar cada punto antes de usarlo:
+Checking each point before using it is the consumer's responsibility:
 
 ```cpp
-for (const auto& punto : puntos) {
-    if (!std::isfinite(punto.y)) continue;  // sin valor en esta x
+for (const auto& point : points) {
+    if (!std::isfinite(point.y)) continue;  // no value at this x
     // ...
 }
 ```
 
-Nunca compares con `==`: `NaN == NaN` es falso.
+Use `isfinite`, not `isnan`: overflow produces infinities, which `isnan` does
+not catch. And never compare with `==`: `NaN == NaN` is false.
+
+## Errors
+
+Invalid input throws. Everything the library throws derives from
+`FunctionParser::LibraryException`:
+
+```cpp
+try {
+    FunctionParser::Expression expression("(1 + 2");
+} catch (const FunctionParser::ExpressionError& e) {
+    // e.what()     -> "There is an open parenthesis"
+    // e.position   -> 0
+} catch (const FunctionParser::RangeError& e) {
+    // invalid Range: zero steps, min > max, non-finite bounds
+}
+```
+
+`position` is `0` when the error does not map to a specific character.
+
+## Building
+
+Requires CMake 3.20 or newer and a C++20 compiler. Catch2 is fetched
+automatically when tests are enabled.
+
+```bash
+cmake -B build -DBUILD_SHARED_LIBS=OFF
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+Consuming it from another CMake project:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+    FunctionParser
+    GIT_REPOSITORY https://github.com/MrAxelius/FunctionParser.git
+    GIT_TAG v1.0.0
+)
+FetchContent_MakeAvailable(FunctionParser)
+target_link_libraries(your_target PRIVATE FunctionParser::FunctionParser)
+```
