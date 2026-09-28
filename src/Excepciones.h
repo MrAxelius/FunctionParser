@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdexcept>
-#include <FunctionParser/Excepciones.h>
+#include <FunctionParser/Exceptions.h>
 
 
 // Internos

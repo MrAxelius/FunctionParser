@@ -6,9 +6,9 @@
 #include <optional>
 
 // Componentes públicos de la librería
-#include <FunctionParser/Sample.h>
-#include <FunctionParser/Rango.h>
-#include <FunctionParser/Excepciones.h>
+#include <FunctionParser/Point.h>
+#include <FunctionParser/Range.h>
+#include <FunctionParser/Exceptions.h>
 
 namespace FunctionParser
 {
@@ -30,7 +30,7 @@ namespace FunctionParser
             
             // pImpl not null assumed as precondition
             [[nodiscard]] std::optional<double> eval(double x) const;
-            [[nodiscard]] std::vector<Punto> evaluateMesh(const Rango &rango) const;
+            [[nodiscard]] std::vector<Punto> evaluateFunction(const Range &rango) const;
 
         private:
             struct Impl;

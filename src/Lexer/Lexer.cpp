@@ -11,7 +11,6 @@
 #include <string_view>
 #include <numbers>
 
-
 namespace
 {
     Token tokenNumero(const std::string &expresion, size_t &pos)
@@ -25,7 +24,7 @@ namespace
             {
                 if (hayPunto)
                 {
-                    throw ErrorLexico("Hay más de 1 punto decimal", pos); 
+                    throw ErrorLexico("There is more than one decimal period", pos);
                 }
                 hayPunto = true;
             }
@@ -36,7 +35,7 @@ namespace
         auto resultado = std::from_chars(expresion.data() + start, expresion.data() + pos, numero);
         if (resultado.ec != std::errc())
         {
-            throw ErrorLexico("El número no es válido",start);
+            throw ErrorLexico("The number is not valid", start);
         }
         return Token(numero, start);
     }
@@ -54,7 +53,7 @@ namespace
         case '/':
             return Token(TokenType::DIVIDE, posicion);
         default:
-            throw ErrorLexico("No es un operador", posicion);
+            throw ErrorLexico("It's not an opperand", posicion);
         }
     }
 
@@ -69,7 +68,7 @@ namespace
         case ')':
             return Token(TokenType::CIERRA_PARENTESIS, posicion);
         default:
-            throw ErrorLexico("No es un caracter especial esperado", posicion);
+            throw ErrorLexico("That's not an expected special character", posicion);
         }
     }
 
@@ -116,8 +115,8 @@ namespace
         {
             return Token(palabra[0], start);
         }
-        
-        throw ErrorLexico("Identificador desconocido", start);
+
+        throw ErrorLexico("Unknown identifier", start);
     }
 }
 namespace Lexer
@@ -125,14 +124,18 @@ namespace Lexer
 
     std::vector<Token> Tokenizar(const std::string &expresionInput)
     {
-        
+
         size_t i = 0;
         std::vector<Token> tokens;
         tokens.reserve(expresionInput.size() / 3);
         while (i < expresionInput.size())
         {
             char c = expresionInput[i];
-            if (std::isspace(static_cast<unsigned char>(c))) { ++i; continue; }
+            if (std::isspace(static_cast<unsigned char>(c)))
+            {
+                ++i;
+                continue;
+            }
             if (std::isdigit(static_cast<unsigned char>(c)))
             {
                 tokens.push_back(tokenNumero(expresionInput, i));
@@ -153,7 +156,7 @@ namespace Lexer
             }
             else
             {
-                throw ErrorLexico("Carácter inesperado en la expresión", i);
+                throw ErrorLexico("Unexpected character on the expression", i);
             }
         }
         return tokens;

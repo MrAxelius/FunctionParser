@@ -17,7 +17,7 @@ int main()
     }
 
     auto rango = FunctionParser::Rango{-2, 2, 4};
-    auto resultado = expresion.evaluateMesh(rango);
+    auto resultado = expresion.evaluateFunction(rango);
     for (size_t i = 0; i < resultado.size(); ++i)
     {
         std::cout << resultado[i].x << std::endl;

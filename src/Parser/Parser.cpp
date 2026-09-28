@@ -24,7 +24,7 @@ namespace
         {
             if (pilaOperandos.empty())
             {
-                throw ErrorLexico("Error en el formato de la expresion", sacado.posicion);
+                throw ErrorLexico("Incorrect formatting on the expression", sacado.posicion);
             }
             hijos[i] = std::move(pilaOperandos.top());
             pilaOperandos.pop();
@@ -48,7 +48,7 @@ namespace
         case TokenType::NEGACION:
             return 3;
         default:
-            throw ErrorDeFormato("Hay un problema con la expresión", token.posicion);
+            throw ErrorDeFormato("There's been a problem with the expression", token.posicion);
         }
     }
 
@@ -72,7 +72,7 @@ namespace
             return 1;
 
         default:
-            throw ErrorDeFormato("El token no es una funcion", token.posicion);
+            throw ErrorDeFormato("The token is not a function", token.posicion);
         }
     }
 
@@ -118,20 +118,20 @@ namespace Parser
                 esperarOperando = false;
                 // Eliminar el paréntesis de apertura
                 if (pilaOperadores.empty())
-                    throw ErrorParentesis("Hay un desbalance en los paréntesis de apertura", elemento.posicion);
+                    throw ErrorParentesis("Open parenthesis has nowhere to close", elemento.posicion);
                 pilaOperadores.pop();
 
                 if (!pilaOperadores.empty() && esFuncion(pilaOperadores.top()))
                 {
                     if (pilaComas.empty())
                     {
-                        throw ErrorParentesis("Faltan argumentos en la funcion", pilaOperadores.top().posicion);
+                        throw ErrorParentesis("Too few arguments to call the function", pilaOperadores.top().posicion);
                     }
                     auto contador = pilaComas.top();
                     pilaComas.pop();
                     if (!pilaOperadores.empty() && contador != aridad(pilaOperadores.top()))
                     {
-                        throw ErrorDeFormato("La funcion no cumple con los parámetros esperados", pilaOperadores.top().posicion);
+                        throw ErrorDeFormato("The function does not have the expected parameters", pilaOperadores.top().posicion);
                     }
                     desapilarOperador(pilaOperadores, pilaOperandos, contador);
                 }
@@ -146,7 +146,7 @@ namespace Parser
                 esperarOperando = true;
                 if (pilaOperadores.empty())
                 {
-                    throw ErrorParentesis("Hay una coma que no corresponde", elemento.posicion);
+                    throw ErrorParentesis("There is a misplaced comma", elemento.posicion);
                 }
                 while (!pilaOperadores.empty() && pilaOperadores.top().tipo != TokenType::ABRE_PARENTESIS)
                 {
@@ -154,7 +154,7 @@ namespace Parser
                 }
                 if (pilaComas.empty())
                 {
-                    throw ErrorDeFormato("Coma inesperada en la expresion", elemento.posicion);
+                    throw ErrorDeFormato("Unexpected comma on the expression", elemento.posicion);
                 }
                 pilaComas.top() += 1;
             }
@@ -182,18 +182,18 @@ namespace Parser
         while (!pilaOperadores.empty())
         {
             if (pilaOperadores.top().tipo == TokenType::ABRE_PARENTESIS)
-                throw ErrorParentesis("Hay un paréntesis sin cerrar", pilaOperadores.top().posicion);
+                throw ErrorParentesis("There is an open parenthesis", pilaOperadores.top().posicion);
             desapilarOperador(pilaOperadores, pilaOperandos, aridad(pilaOperadores.top()));
         }
         if (pilaOperandos.empty())
         {
-            throw ErrorDeNodos("Faltan operandos", 0);
+            throw ErrorDeNodos("Missing operands", 0);
         }
         auto ultimoElemento = std::move(pilaOperandos.top());
         pilaOperandos.pop();
         if (!pilaOperandos.empty())
         {
-            throw ErrorDeNodos("Sobran operandos", tokens.back().posicion);
+            throw ErrorDeNodos("Too many operands", tokens.back().posicion);
         }
         return ultimoElemento;
     }

@@ -2,7 +2,7 @@
 #include <catch2/catch_approx.hpp>
 #include <numbers>
 #include <memory>
-#include <FunctionParser/Rango.h>
+#include <FunctionParser/Range.h>
 
 #include "Lexer/Lexer.h"
 #include "Parser/Parser.h"
@@ -11,7 +11,7 @@
 
 TEST_CASE("Prueba de tamanno")
 {
-    FunctionParser::Rango rango{0, 10, 5};
+    FunctionParser::Range rango{0, 10, 5};
     auto tokens = Lexer::Tokenizar("log(8, x)");
     auto nodo = Parser::ShuntingYard(tokens);
     auto resultado = Muestreo::muestrear(*nodo, rango);
@@ -19,7 +19,7 @@ TEST_CASE("Prueba de tamanno")
 }
 TEST_CASE("Prueba NaN")
 {
-    FunctionParser::Rango rango{-2.0, 2.0, 4};
+    FunctionParser::Range rango{-2.0, 2.0, 4};
     auto tokens = Lexer::Tokenizar("1 / x");
     auto nodo = Parser::ShuntingYard(tokens);
     auto resultado = Muestreo::muestrear(*nodo, rango);
@@ -32,7 +32,7 @@ TEST_CASE("Prueba NaN")
 }
 TEST_CASE("Extremos")
 {
-    FunctionParser::Rango rango{0, 10, 5};
+    FunctionParser::Range rango{0, 10, 5};
     auto tokens = Lexer::Tokenizar("x + 1 ");
     auto nodo = Parser::ShuntingYard(tokens);
     auto resultado = Muestreo::muestrear(*nodo, rango);
@@ -42,21 +42,21 @@ TEST_CASE("Extremos")
 }
 TEST_CASE("pasos = 0")
 {
-    FunctionParser::Rango rango{0, 5, 0};
+    FunctionParser::Range rango{0, 5, 0};
     auto tokens = Lexer::Tokenizar("x + 1");
     auto nodo = Parser::ShuntingYard(tokens);
     REQUIRE_THROWS_AS(Muestreo::muestrear(*nodo, rango), FunctionParser::RangeError);
 }
 TEST_CASE("min > max")
 {
-    FunctionParser::Rango rango{5, 2, 6};
+    FunctionParser::Range rango{5, 2, 6};
     auto tokens = Lexer::Tokenizar("x + 1");
     auto nodo = Parser::ShuntingYard(tokens);
     REQUIRE_THROWS_AS(Muestreo::muestrear(*nodo, rango), FunctionParser::RangeError);
 }
 TEST_CASE("min == max ")
 {
-    FunctionParser::Rango rango{5, 5, 2};
+    FunctionParser::Range rango{5, 5, 2};
     auto tokens = Lexer::Tokenizar("x + 1");
     auto nodo = Parser::ShuntingYard(tokens);
     REQUIRE_THROWS_AS(Muestreo::muestrear(*nodo, rango), FunctionParser::RangeError);

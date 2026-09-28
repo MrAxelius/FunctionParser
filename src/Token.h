@@ -50,7 +50,7 @@ struct Token
             return std::get<double>(valor);
         }else
         {
-            throw ErrorNoEsValorEsperado("El token no tiene un valor numerico ", posicion);
+            throw ErrorNoEsValorEsperado("The token has no numerical value ", posicion);
         }
     }
     [[nodiscard]] char getNombre() const
@@ -59,7 +59,7 @@ struct Token
             return std::get<char>(valor);
         }
         else{
-            throw ErrorNoEsValorEsperado("El token no tiene un valor de carácter", posicion);
+            throw ErrorNoEsValorEsperado("The token has no character value ", posicion);
         }
     }
 };

@@ -43,7 +43,7 @@ TEST_CASE("Camino feliz")
 TEST_CASE("Camino feliz con rangos")
 {
     auto expresion = FunctionParser::Expression("x*x");
-    auto valores = expresion.evaluateMesh(FunctionParser::Rango{0.0, 10.0, 5});
+    auto valores = expresion.evaluateFunction(FunctionParser::Range{0.0, 10.0, 5});
     CHECK(valores.size() == 6);
     CHECK(valores.at(0).y == 0);
     CHECK(valores.at(0).x == 0);
@@ -53,11 +53,11 @@ TEST_CASE("Camino feliz con rangos")
 TEST_CASE("Error de rangos")
 {
     auto expresion = FunctionParser::Expression("x*x");
-    REQUIRE_THROWS_AS(expresion.evaluateMesh(FunctionParser::Rango{0.0, 10.0, 0}), FunctionParser::RangeError);
+    REQUIRE_THROWS_AS(expresion.evaluateFunction(FunctionParser::Range{0.0, 10.0, 0}), FunctionParser::RangeError);
 }
 TEST_CASE("Jerarquia funcional")
 {
     auto expresion = FunctionParser::Expression("x*x");
     REQUIRE_THROWS_AS(FunctionParser::Expression("y + 1"), FunctionParser::LibraryException);
-    REQUIRE_THROWS_AS(expresion.evaluateMesh(FunctionParser::Rango{0.0, 10.0, 0}), FunctionParser::LibraryException);
+    REQUIRE_THROWS_AS(expresion.evaluateFunction(FunctionParser::Range{0.0, 10.0, 0}), FunctionParser::LibraryException);
 }

@@ -33,7 +33,7 @@ namespace FunctionParser
             // pImpl not null assumed as precondition
             return Evaluador::evaluacionRecursiva(*pImpl->ast, x);
         }
-        std::vector<Punto> Expression::evaluateMesh(const Rango &rango) const
+        std::vector<Punto> Expression::evaluateFunction(const Range &rango) const
         {
             return Muestreo::muestrear(*pImpl->ast, rango);
         }

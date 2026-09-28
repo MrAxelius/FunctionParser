@@ -157,7 +157,7 @@ namespace Evaluador
             return (*arg1) * (*arg2);
         }
         default:
-            throw ErrorEnDesarrollo("Algo ha salido mal al evaluar la función");
+            throw ErrorEnDesarrollo("Something went wrong while evaluating the function");
         }
     }
 }

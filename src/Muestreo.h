@@ -8,9 +8,9 @@
 #include <cmath>
 #include <limits>
 
-#include <FunctionParser/Sample.h>
-#include <FunctionParser/Rango.h>
-#include <FunctionParser/Excepciones.h>
+#include <FunctionParser/Point.h>
+#include <FunctionParser/Range.h>
+#include <FunctionParser/Exceptions.h>
 
 namespace Muestreo
 {
@@ -18,13 +18,13 @@ namespace Muestreo
     // Validar aquí es provisional
     namespace validar
     {
-        inline void validarRango(const fp::Rango &rango)
+        inline void validarRango(const fp::Range &rango)
         {
             if (!std::isfinite(rango.max) || !std::isfinite(rango.min))
             {
                 throw fp::RangeError("Maximum and minimum range must be finite numbers");
             }
-            if (rango.pasos == 0)
+            if (rango.steps == 0)
             {
                 throw fp::RangeError("Step cannot be 0");
             }
@@ -39,14 +39,14 @@ namespace Muestreo
         }
     }
 
-    inline std::vector<fp::Punto> muestrear(const Nodo &nodo, const fp::Rango &rango)
+    inline std::vector<fp::Punto> muestrear(const Nodo &nodo, const fp::Range &rango)
     {
         validar::validarRango(rango);
-        double paso = (rango.max - rango.min) / static_cast<double>(rango.pasos);
+        double paso = (rango.max - rango.min) / static_cast<double>(rango.steps);
         std::vector<fp::Punto> resultado;
-        resultado.reserve(rango.pasos + 1);
+        resultado.reserve(rango.steps + 1);
         
-        for (std::size_t i = 0; i <= rango.pasos; ++i)
+        for (std::size_t i = 0; i <= rango.steps; ++i)
         {
             double x = rango.min + static_cast<double>(i) * paso;
             auto valor = Evaluador::evaluacionRecursiva(nodo, x);
