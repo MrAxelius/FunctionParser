@@ -30,7 +30,7 @@ namespace FunctionParser
             
             // pImpl not null assumed as precondition
             [[nodiscard]] std::optional<double> eval(double x) const;
-            [[nodiscard]] std::vector<Punto> evaluateFunction(const Range &rango) const;
+            [[nodiscard]] std::vector<Point> evaluateFunction(const Range &range) const;
 
         private:
             struct Impl;

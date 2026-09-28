@@ -39,11 +39,11 @@ namespace Muestreo
         }
     }
 
-    inline std::vector<fp::Punto> muestrear(const Nodo &nodo, const fp::Range &rango)
+    inline std::vector<fp::Point> muestrear(const Nodo &nodo, const fp::Range &rango)
     {
         validar::validarRango(rango);
         double paso = (rango.max - rango.min) / static_cast<double>(rango.steps);
-        std::vector<fp::Punto> resultado;
+        std::vector<fp::Point> resultado;
         resultado.reserve(rango.steps + 1);
         
         for (std::size_t i = 0; i <= rango.steps; ++i)
@@ -52,11 +52,11 @@ namespace Muestreo
             auto valor = Evaluador::evaluacionRecursiva(nodo, x);
             if (valor)
             {
-                resultado.push_back(fp::Punto{x, *valor});
+                resultado.push_back(fp::Point{x, *valor});
             }
             else
             {
-                resultado.push_back(fp::Punto(x, std::numeric_limits<double>::quiet_NaN())); 
+                resultado.push_back(fp::Point(x, std::numeric_limits<double>::quiet_NaN())); 
             }
         }
         return resultado;

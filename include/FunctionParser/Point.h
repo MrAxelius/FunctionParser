@@ -6,7 +6,7 @@ namespace FunctionParser
 {
     inline namespace v1
     {
-        struct Punto
+        struct Point
         {
             // Si y no es un punto finito (NaN / +- inf) no se evalua
             double x = 0.0;
