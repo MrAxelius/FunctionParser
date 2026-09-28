@@ -6,7 +6,8 @@ namespace FunctionParser
     inline namespace v1
     {
         // 1 variable, una función
-        // paso = intervalo, return pasos + 1 puntos
+        // a step is an interval
+        // return steps + 1
         struct Range
         {
             double min = -1.0;

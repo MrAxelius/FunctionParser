@@ -8,7 +8,7 @@ namespace FunctionParser
     {
         struct Point
         {
-            // Si y no es un punto finito (NaN / +- inf) no se evalua
+            // y may be +-inf or NaN (if overflow or undefined), check before use with isfinite
             double x = 0.0;
             double y = 0.0;
         };
