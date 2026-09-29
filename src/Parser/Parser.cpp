@@ -87,6 +87,64 @@ namespace
             return false;
         }
     }
+    enum class Estado
+    {
+        ESPERA_OPERANDO,
+        ESPERA_OPERADOR,
+        ESPERA_APERTURA
+    };
+    enum class Categoria
+    {
+        OPERANDO,
+        OPERADOR,
+        APERTURA
+    };
+
+    Categoria categoriaToken(const Token &token)
+    {
+        switch (token.tipo)
+        {
+        case TokenType::NUMERO:
+        case TokenType::VARIABLE:
+        case TokenType::SIN:
+        case TokenType::COS:
+        case TokenType::TAN:
+        case TokenType::LOG:
+        case TokenType::POW:
+        case TokenType::NRT:
+            return Categoria::OPERANDO;
+
+        case TokenType::ADD:
+        case TokenType::SUB:
+        case TokenType::DIVIDE:
+        case TokenType::MULT:
+        case TokenType::COMA:
+        case TokenType::CIERRA_PARENTESIS:
+            return Categoria::OPERADOR;
+
+        case TokenType::ABRE_PARENTESIS:
+            return Categoria::APERTURA;
+
+        case TokenType::NEGACION:
+            // Change if NEGACION can be sent, now is created later, so cannot exist here
+            throw ErrorEnDesarrollo("This is not an expected Token");
+        }
+    }
+    void comprobarCategoriaToken(Estado estadoEsperado, Categoria categoriaEntrada, size_t posicion)
+    {
+        if (estadoEsperado == Estado::ESPERA_APERTURA && categoriaEntrada != Categoria::APERTURA)
+        {
+            throw ErrorDeFormato("Expected an '('", posicion);
+        }
+        if (estadoEsperado == Estado::ESPERA_OPERADOR && categoriaEntrada != Categoria::OPERADOR)
+        {
+            throw ErrorDeFormato("Expected an operator", posicion);
+        }
+        if (estadoEsperado == Estado::ESPERA_OPERANDO && categoriaEntrada == Categoria::OPERADOR) // Must allow '('
+        {
+            throw ErrorDeFormato("Expected an operand", posicion);
+        }
+    }
 }
 namespace Parser
 {
@@ -96,13 +154,20 @@ namespace Parser
         std::stack<std::unique_ptr<Nodo>> pilaOperandos;
         std::stack<int> pilaComas;
 
-        bool esperarOperando = true;
+        Estado estadoEsperado = Estado::ESPERA_OPERANDO;
+        Categoria categoria;
 
         for (const auto &elemento : tokens)
         {
+            categoria = categoriaToken(elemento);
+            if (estadoEsperado != Estado::ESPERA_OPERANDO || elemento.tipo != TokenType::SUB)
+            {
+                comprobarCategoriaToken(estadoEsperado, categoria, elemento.posicion);
+            }
+
             if (elemento.tipo == TokenType::ABRE_PARENTESIS)
             {
-                esperarOperando = true;
+                estadoEsperado = Estado::ESPERA_OPERANDO;
                 if (!pilaOperadores.empty() && esFuncion(pilaOperadores.top()))
                 {
                     pilaComas.push(1);
@@ -115,7 +180,7 @@ namespace Parser
                 {
                     desapilarOperador(pilaOperadores, pilaOperandos, aridad(pilaOperadores.top()));
                 }
-                esperarOperando = false;
+                estadoEsperado = Estado::ESPERA_OPERADOR;
                 // Eliminar el paréntesis de apertura
                 if (pilaOperadores.empty())
                     throw ErrorParentesis("Open parenthesis has nowhere to close", elemento.posicion);
@@ -123,6 +188,7 @@ namespace Parser
 
                 if (!pilaOperadores.empty() && esFuncion(pilaOperadores.top()))
                 {
+                    estadoEsperado = Estado::ESPERA_OPERADOR;
                     if (pilaComas.empty())
                     {
                         throw ErrorParentesis("Too few arguments to call the function", pilaOperadores.top().posicion);
@@ -139,11 +205,11 @@ namespace Parser
             else if (elemento.tipo >= TokenType::POW && elemento.tipo <= TokenType::LOG)
             {
                 pilaOperadores.push(elemento);
-                esperarOperando = true;
+                estadoEsperado = Estado::ESPERA_APERTURA;
             }
             else if (elemento.tipo == TokenType::COMA)
             {
-                esperarOperando = true;
+                estadoEsperado = Estado::ESPERA_OPERANDO;
                 if (pilaOperadores.empty())
                 {
                     throw ErrorParentesis("There is a misplaced comma", elemento.posicion);
@@ -158,14 +224,15 @@ namespace Parser
                 }
                 pilaComas.top() += 1;
             }
-            else if(elemento.tipo == TokenType::SUB && esperarOperando){
+            else if (elemento.tipo == TokenType::SUB && estadoEsperado == Estado::ESPERA_OPERANDO)
+            {
                 Token tokenSub(TokenType::NEGACION, elemento.posicion);
                 pilaOperadores.push(tokenSub);
-                esperarOperando = true;
+                estadoEsperado = Estado::ESPERA_OPERANDO;
             }
             else if (elemento.tipo >= TokenType::ADD && elemento.tipo <= TokenType::DIVIDE) // Esto son los operadores
             {
-                esperarOperando = true;
+                estadoEsperado = Estado::ESPERA_OPERANDO;
                 while (!pilaOperadores.empty() && pilaOperadores.top().tipo != TokenType::ABRE_PARENTESIS && prioridad(pilaOperadores.top()) >= prioridad(elemento))
                 {
                     desapilarOperador(pilaOperadores, pilaOperandos, aridad(pilaOperadores.top()));
@@ -176,9 +243,14 @@ namespace Parser
             {
                 auto nodo = std::make_unique<Nodo>(elemento, nullptr, nullptr);
                 pilaOperandos.push(std::move(nodo));
-                esperarOperando = false;
+                estadoEsperado = Estado::ESPERA_OPERADOR;
             }
         }
+        if (estadoEsperado != Estado::ESPERA_OPERADOR)
+        {
+            throw ErrorDeFormato("The expression is not complete.", tokens.back().posicion);
+        }
+        // Empty the stack
         while (!pilaOperadores.empty())
         {
             if (pilaOperadores.top().tipo == TokenType::ABRE_PARENTESIS)
