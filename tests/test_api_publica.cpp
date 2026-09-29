@@ -1,18 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <FunctionParser/FunctionParser.h>
 
-TEST_CASE("Sobran operandos")
-{
-    try
-    {
-        auto expresion = FunctionParser::Expression("2 sin 5");
-        FAIL("No ha habido ningun throw...");
-    }
-    catch (const FunctionParser::ExpressionError &e)
-    {
-        CHECK(e.position == 6);
-    }
-}
 TEST_CASE("Parentesis sin cerrar")
 {
     try

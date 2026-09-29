@@ -22,3 +22,7 @@ TEST_CASE("Prueba de tokens pi y e")
     CHECK(tokens[2].tipo == TokenType::NUMERO);
     CHECK(tokens[2].getValorNumerico() == std::numbers::e);
 }
+TEST_CASE("String vacio")
+{
+    REQUIRE_THROWS(Lexer::Tokenizar(""));
+}

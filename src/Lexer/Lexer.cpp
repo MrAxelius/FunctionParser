@@ -128,6 +128,9 @@ namespace Lexer
         size_t i = 0;
         std::vector<Token> tokens;
         tokens.reserve(expresionInput.size() / 3);
+        if(expresionInput.empty()){
+            throw ErrorDeFormato("The expression is empty.", 0);
+        }
         while (i < expresionInput.size())
         {
             char c = expresionInput[i];

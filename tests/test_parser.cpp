@@ -62,5 +62,45 @@ TEST_CASE("Comprobar la desapilacion dinamica")
 TEST_CASE("Seno con solo negacion")
 {
     auto token = Lexer::Tokenizar("sin(-)");
-    REQUIRE_THROWS(Parser::ShuntingYard(token));   
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Funcion sin parentesis ")
+{
+    auto token = Lexer::Tokenizar("4 pow(,6)");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Funcion con numeros y parentesis incorrectos")
+{
+    auto token = Lexer::Tokenizar("2 sin()");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Funcion solo con parentesis")
+{
+    auto token = Lexer::Tokenizar("sin()");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Numero y operador sueltos")
+{
+    auto token = Lexer::Tokenizar("2 +");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Parentesis abiertos")
+{
+    auto token = Lexer::Tokenizar("( 2 + 4");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Funcion suelta")
+{
+    auto token = Lexer::Tokenizar("sin");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Funcion suelta con parentesis abierto")
+{
+    auto token = Lexer::Tokenizar("sin(");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
+}
+TEST_CASE("Consecucion de operandos")
+{
+    auto token = Lexer::Tokenizar("2 3");
+    REQUIRE_THROWS(Parser::ShuntingYard(token));
 }
