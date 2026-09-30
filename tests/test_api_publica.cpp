@@ -61,3 +61,18 @@ TEST_CASE("Jerarquia funcional")
     REQUIRE_THROWS_AS(FunctionParser::Expression("y + 1"), FunctionParser::LibraryException);
     REQUIRE_THROWS_AS(expresion.evaluateFunction(FunctionParser::Range{0.0, 10.0, 0}), FunctionParser::LibraryException);
 }
+TEST_CASE("Caracteres no identificados")
+{
+    REQUIRE_THROWS(FunctionParser::Expression(""));
+    REQUIRE_THROWS(FunctionParser::Expression(" "));
+    REQUIRE_THROWS(FunctionParser::Expression("\t"));
+    REQUIRE_THROWS(FunctionParser::Expression("\n"));
+}
+TEST_CASE("Limites de pasos")
+{
+    auto expresion = FunctionParser::Expression("x*x");
+    auto funcion = expresion.evaluateFunction({-1, 1, 10000});
+    REQUIRE(funcion.size() == 10001);
+
+    REQUIRE_THROWS_AS(expresion.evaluateFunction({-1, 1, 10001}), FunctionParser::RangeError);
+}

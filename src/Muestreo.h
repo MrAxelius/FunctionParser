@@ -20,9 +20,14 @@ namespace Muestreo
     {
         inline void validarRango(const fp::Range &rango)
         {
+            double LIM_STEPS = 10000;
             if (!std::isfinite(rango.max) || !std::isfinite(rango.min))
             {
                 throw fp::RangeError("Maximum and minimum range must be finite numbers");
+            }
+            if (rango.steps > LIM_STEPS)
+            {
+                throw fp::RangeError("The number of steps is too big , limit is 10.000");
             }
             if (rango.steps == 0)
             {
@@ -45,7 +50,7 @@ namespace Muestreo
         double paso = (rango.max - rango.min) / static_cast<double>(rango.steps);
         std::vector<fp::Point> resultado;
         resultado.reserve(rango.steps + 1);
-        
+
         for (std::size_t i = 0; i <= rango.steps; ++i)
         {
             double x = rango.min + static_cast<double>(i) * paso;
@@ -56,7 +61,7 @@ namespace Muestreo
             }
             else
             {
-                resultado.push_back(fp::Point(x, std::numeric_limits<double>::quiet_NaN())); 
+                resultado.push_back(fp::Point(x, std::numeric_limits<double>::quiet_NaN()));
             }
         }
         return resultado;
