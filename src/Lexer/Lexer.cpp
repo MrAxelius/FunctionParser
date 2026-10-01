@@ -162,6 +162,8 @@ namespace Lexer
                 throw ErrorLexico("Unexpected character on the expression", i);
             }
         }
+        if(tokens.empty())
+            throw ErrorDeFormato("No valid tokens on the expression", 0);
         return tokens;
     }
 }
