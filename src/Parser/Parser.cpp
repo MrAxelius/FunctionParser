@@ -6,6 +6,7 @@
 #include <variant>
 #include <stack>
 #include <optional>
+#include <algorithm>
 
 #include "Token.h"
 #include "Nodo.h"
@@ -17,18 +18,20 @@ namespace
                            int numeroHijos)
     {
         std::vector<std::unique_ptr<Nodo>> hijos;
-        hijos.resize(numeroHijos);
+        size_t numero = static_cast<size_t>(numeroHijos);
+        hijos.reserve(numero);
         auto sacado = pilaOperadores.top();
         pilaOperadores.pop();
-        for (int i = numeroHijos - 1; i >= 0; --i)
+        for (size_t i = 0; i < numero; ++i)
         {
             if (pilaOperandos.empty())
             {
                 throw ErrorLexico("Incorrect formatting on the expression", sacado.posicion);
             }
-            hijos[i] = std::move(pilaOperandos.top());
+            hijos.push_back(std::move(pilaOperandos.top()));
             pilaOperandos.pop();
         }
+        std::ranges::reverse(hijos);
         auto nodo = std::make_unique<Nodo>(sacado, std::move(hijos));
         pilaOperandos.push(std::move(nodo));
     }
@@ -126,9 +129,10 @@ namespace
             return Categoria::APERTURA;
 
         case TokenType::NEGACION:
-            // Change if NEGACION can be sent, now is created later, so cannot exist here
+            // Change if NEGACION can be sent, rn is created later, so cannot exist here
             throw ErrorEnDesarrollo("This is not an expected Token");
         }
+        throw ErrorEnDesarrollo("TThis is not an expected Token");
     }
     void comprobarCategoriaToken(Estado estadoEsperado, Categoria categoriaEntrada, size_t posicion)
     {
