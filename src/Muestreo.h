@@ -20,14 +20,14 @@ namespace Muestreo
     {
         inline void validarRango(const fp::Range &rango)
         {
-            double LIM_STEPS = 10000;
+            constexpr std::size_t LIM_STEPS = 10000;
             if (!std::isfinite(rango.max) || !std::isfinite(rango.min))
             {
                 throw fp::RangeError("Maximum and minimum range must be finite numbers");
             }
             if (rango.steps > LIM_STEPS)
             {
-                throw fp::RangeError("The number of steps is too big , limit is 10.000");
+                throw fp::RangeError("The number of steps is too big, limit is " + std::to_string(LIM_STEPS));
             }
             if (rango.steps == 0)
             {

@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.nombre }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      # Sin esto, el primer fallo cancela los demas y solo ves uno de los
+      # cuatro. Casi siempre quieres el cuadro completo.
+      fail-fast: false
+      matrix:
+        include:
+          - nombre: Windows MSVC
+            os: windows-latest
+          - nombre: Linux GCC
+            os: ubuntu-latest
+            cc: gcc
+            cxx: g++
+          - nombre: Linux Clang
+            os: ubuntu-latest
+            cc: clang
+            cxx: clang++
+          - nombre: macOS Clang
+            os: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Release
+          -DFUNCTIONPARSER_WERROR=ON
+
+      - name: Compilar
+        run: cmake --build build --config Release --parallel
+
+      - name: Tests
+        run: ctest --test-dir build --build-config Release --output-on-failure

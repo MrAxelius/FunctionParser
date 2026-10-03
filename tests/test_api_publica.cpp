@@ -17,10 +17,7 @@ TEST_CASE("Identificador desconocido")
 {
     REQUIRE_THROWS_AS(FunctionParser::Expression("y + 1"), FunctionParser::ExpressionError);
 }
-TEST_CASE("Vacio")
-{
-    REQUIRE_THROWS_AS(FunctionParser::Expression(""), FunctionParser::ExpressionError);
-}
+
 TEST_CASE("Camino feliz")
 {
     auto expresion = FunctionParser::Expression("x*x");
@@ -49,12 +46,12 @@ TEST_CASE("Jerarquia funcional")
     REQUIRE_THROWS_AS(FunctionParser::Expression("y + 1"), FunctionParser::LibraryException);
     REQUIRE_THROWS_AS(expresion.evaluateFunction(FunctionParser::Range{0.0, 10.0, 0}), FunctionParser::LibraryException);
 }
-TEST_CASE("Caracteres no identificados")
+TEST_CASE("Entradas sin tokens")
 {
-    REQUIRE_THROWS(FunctionParser::Expression(""));
-    REQUIRE_THROWS(FunctionParser::Expression(" "));
-    REQUIRE_THROWS(FunctionParser::Expression("\t"));
-    REQUIRE_THROWS(FunctionParser::Expression("\n"));
+    REQUIRE_THROWS_AS(FunctionParser::Expression(""), FunctionParser::ExpressionError);
+    REQUIRE_THROWS_AS(FunctionParser::Expression(" "), FunctionParser::ExpressionError);
+    REQUIRE_THROWS_AS(FunctionParser::Expression("\t"), FunctionParser::ExpressionError);
+    REQUIRE_THROWS_AS(FunctionParser::Expression("\n"), FunctionParser::ExpressionError);
 }
 TEST_CASE("Limites de pasos")
 {
