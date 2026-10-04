@@ -85,6 +85,28 @@ try {
 
 `position` is `0` when the error does not map to a specific character.
 
+## Validity
+
+A freshly constructed `Expression` is always valid: the constructor either
+succeeds or throws. Moving from an `Expression` leaves the source invalid.
+
+`eval` and `evaluateFunction` require a valid object. Calling either one on an
+invalid `Expression` is undefined behaviour.
+
+Everything else is safe on any `Expression`, valid or not: the destructor, move
+assignment, and the validity check itself.
+
+```cpp
+FunctionParser::Expression a("x*x");
+FunctionParser::Expression b = std::move(a);
+
+if (a) { /* not taken: a was moved from */ }
+if (b) { /* taken */ }
+```
+
+You only need the check where an `Expression` may have been moved from. A
+freshly constructed one does not.
+
 ## Building
 
 Requires CMake 3.20 or newer and a C++20 compiler. Catch2 is fetched

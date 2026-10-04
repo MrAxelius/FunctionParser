@@ -61,3 +61,20 @@ TEST_CASE("Limites de pasos")
 
     REQUIRE_THROWS_AS(expresion.evaluateFunction({-1, 1, 10001}), FunctionParser::RangeError);
 }
+TEST_CASE("Construccion y construccion por movimiento")
+{
+    auto expresion = FunctionParser::Expression("sin(pi)");
+    CHECK(expresion);
+    auto expresion2 = std::move(expresion);
+    CHECK_FALSE(expresion);
+    CHECK(expresion2);
+}
+TEST_CASE("Asignacion por movimiento en expresion preconstruida ")
+{
+    auto expresion = FunctionParser::Expression("sin(pi)");
+    CHECK(expresion);
+    auto expresion2 = FunctionParser::Expression("1 + 3");
+    expresion2 = std::move(expresion);
+    CHECK_FALSE(expresion);
+    CHECK(expresion2);
+}
