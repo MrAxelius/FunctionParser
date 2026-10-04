@@ -37,6 +37,9 @@ namespace FunctionParser
         {
             return Muestreo::muestrear(*pImpl->ast, rango);
         }
-
+        Expression::operator bool() const noexcept
+        {
+            return this->pImpl != nullptr;
+        }
     }
 }
