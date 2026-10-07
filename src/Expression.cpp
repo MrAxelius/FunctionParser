@@ -21,7 +21,7 @@ namespace FunctionParser
         {
             auto tokens = Lexer::Tokenizar(input);
             auto nodo = Parser::ShuntingYard(tokens);
-            this->pImpl = std::make_unique<Impl>(std::move(nodo));                          
+            this->pImpl = std::make_unique<Impl>(std::move(nodo));
         }
 
         Expression::~Expression() = default;
@@ -30,8 +30,13 @@ namespace FunctionParser
 
         std::optional<double> Expression::eval(double x) const
         {
-            // pImpl not null assumed as precondition
-            return Evaluador::evaluacionRecursiva(*pImpl->ast, x);
+            auto resultado = Evaluador::evaluacionRecursiva(*pImpl->ast, x);
+            // La propagación es interna, pero el resultado se filtra en la frontera
+            if (!std::isfinite(resultado))
+            {
+                return std::nullopt;
+            }
+            return resultado;
         }
         std::vector<Point> Expression::evaluateFunction(const Range &rango) const
         {

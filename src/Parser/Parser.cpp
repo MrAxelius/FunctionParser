@@ -1,4 +1,7 @@
 #include "Parser.h"
+#include "Token.h"
+#include "Nodo.h"
+#include "Excepciones.h"
 
 #include <string>
 #include <vector>
@@ -8,9 +11,6 @@
 #include <optional>
 #include <algorithm>
 
-#include "Token.h"
-#include "Nodo.h"
-#include "Excepciones.h"
 namespace
 {
     void desapilarOperador(std::stack<Token> &pilaOperadores,

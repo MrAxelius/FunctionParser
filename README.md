@@ -130,3 +130,17 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(FunctionParser)
 target_link_libraries(your_target PRIVATE FunctionParser::FunctionParser)
 ```
+### Known limitations
+
+- `pow((1,2))` parses and returns 1 instead of reporting a syntax error.
+- Evaluation is recursive, so deeply nested expressions can overflow the
+  stack (around 7000 terms on Windows).
+- Odd roots of negative numbers are rejected: `nrt(-8, 3)` returns no value
+  even though it is defined over the reals. This is a deliberate
+  simplification, not a mathematical claim.
+- `nrt(x, i)` with a non-finite index returns 1, because `1/inf` is 0 and
+  IEEE 754 defines `pow(x, 0)` as 1.
+- `pow(x, 0)` returns 1 for every `x`, including NaN, and `pow(1, y)`
+  returns 1 for every `y`, including NaN. Both are required by IEEE 754, so
+  an error value that reaches either one stops propagating and the result
+  looks valid.
