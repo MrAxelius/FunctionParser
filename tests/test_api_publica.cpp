@@ -78,3 +78,36 @@ TEST_CASE("Asignacion por movimiento en expresion preconstruida ")
     CHECK_FALSE(expresion);
     CHECK(expresion2);
 }
+TEST_CASE("Colapso del desbordamiento en la frontera")
+{
+    auto expresion = FunctionParser::Expression("pow(10, 400)");
+    auto resultado = expresion.eval(5.0);
+    CHECK_FALSE(resultado.has_value());
+}
+TEST_CASE("Rai negativa")
+{
+    auto expresion = FunctionParser::Expression("nrt(-8, 2)");
+    auto resultado = expresion.eval(5.0);
+    CHECK_FALSE(resultado.has_value());
+}
+TEST_CASE("Rai con indice 0")
+{
+    auto expresion = FunctionParser::Expression("nrt(0.5, 0)");
+    auto resultado = expresion.eval(5.0);
+    CHECK_FALSE(resultado.has_value());
+}
+TEST_CASE("logaritmo con 0")
+{
+    auto expresion = FunctionParser::Expression("log(5,0)");
+    auto resultado = expresion.eval(5.0);
+    CHECK_FALSE(resultado.has_value());
+}
+TEST_CASE("Propagacion")
+{
+    auto expresion = FunctionParser::Expression("1 + 2 *  sin(cos(tan(nrt(-8,1))))");
+    auto resultado = expresion.eval(5.0);
+    CHECK_FALSE(resultado.has_value());
+    auto expresion2 = FunctionParser::Expression("1 + 2 *  sin(cos(tan(nrt(8,1))))");
+    auto resultado2 = expresion2.eval(5.0);
+    CHECK(resultado2.has_value());
+}

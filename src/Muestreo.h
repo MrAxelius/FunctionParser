@@ -4,9 +4,8 @@
 #include "Evaluador.h"
 
 #include <vector>
-#include <memory>
 #include <cmath>
-#include <limits>
+#include <string>
 
 #include <FunctionParser/Point.h>
 #include <FunctionParser/Range.h>
@@ -55,14 +54,7 @@ namespace Muestreo
         {
             double x = rango.min + static_cast<double>(i) * paso;
             auto valor = Evaluador::evaluacionRecursiva(nodo, x);
-            if (valor)
-            {
-                resultado.push_back(fp::Point{x, *valor});
-            }
-            else
-            {
-                resultado.push_back(fp::Point(x, std::numeric_limits<double>::quiet_NaN()));
-            }
+            resultado.push_back(fp::Point{x, valor});
         }
         return resultado;
     }

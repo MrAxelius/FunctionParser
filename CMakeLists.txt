@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(FunctionParser VERSION 1.0.1 LANGUAGES CXX)
+project(FunctionParser VERSION 1.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,6 +12,7 @@ option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_EXAMPLES "Build examples" OFF)
 option(FUNCTIONPARSER_WERROR "Treat compiler warnings as errors" OFF)
+option(FUNCTIONPARSER_BUILD_BENCHMARKS "Build the benchmark executable" OFF)
 
 # ---------------------------------------------------------------------------
 # Avisos del compilador, como objetivo INTERFACE.
@@ -26,11 +27,13 @@ add_library(fp_avisos INTERFACE)
 
 if(MSVC)
     target_compile_options(fp_avisos INTERFACE /utf-8 /W4)
+
     if(FUNCTIONPARSER_WERROR)
         target_compile_options(fp_avisos INTERFACE /WX)
     endif()
 else()
     target_compile_options(fp_avisos INTERFACE -Wall -Wextra -Wconversion)
+
     if(FUNCTIONPARSER_WERROR)
         target_compile_options(fp_avisos INTERFACE -Werror)
     endif()
@@ -61,6 +64,19 @@ if(BUILD_EXAMPLES)
     target_link_libraries(parser_cli PRIVATE FunctionParser::FunctionParser fp_avisos)
 endif()
 
+# ---------------------------------------------------------------------------
+# Benchmark. Enlaza por el alias y sin src/ en la ruta de inclusión, igual que
+# api_tests: es un consumidor externo, y si el header público dejara de
+# compilar por si solo, este objetivo lo detecta.
+#
+# Apagado por defecto. En Release hereda /O2 y NDEBUG, asi que los assert del
+# evaluador quedan fuera de la medicion sin depender de que nadie lo recuerde.
+# ---------------------------------------------------------------------------
+if(FUNCTIONPARSER_BUILD_BENCHMARKS)
+    add_executable(fp_benchmark benchmark/benchmark.cpp)
+    target_link_libraries(fp_benchmark PRIVATE FunctionParser::FunctionParser fp_avisos)
+endif()
+
 # Para el catch2
 if(BUILD_TESTS)
     include(FetchContent)
@@ -88,10 +104,12 @@ if(BUILD_TESTS)
     )
     target_link_libraries(api_tests PRIVATE FunctionParser::FunctionParser Catch2::Catch2WithMain fp_avisos)
 
-    include(CTest)
+    enable_testing()
     include(Catch)
     catch_discover_tests(parser_tests)
     catch_discover_tests(api_tests)
 endif()
+
+option(FUNCTIONPARSER_BUILD_BENCHMARKS "Build the benchmark executable" OFF)
 
 install(DIRECTORY include/ DESTINATION include)
