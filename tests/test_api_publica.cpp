@@ -86,7 +86,7 @@ TEST_CASE("Colapso del desbordamiento en la frontera")
 }
 TEST_CASE("Rai negativa")
 {
-    auto expresion = FunctionParser::Expression("nrt(-8, 2)");
+    auto expresion = FunctionParser::Expression("nrt(-8, 1)");
     auto resultado = expresion.eval(5.0);
     CHECK_FALSE(resultado.has_value());
 }

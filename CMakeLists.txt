@@ -109,7 +109,4 @@ if(BUILD_TESTS)
     catch_discover_tests(parser_tests)
     catch_discover_tests(api_tests)
 endif()
-
-option(FUNCTIONPARSER_BUILD_BENCHMARKS "Build the benchmark executable" OFF)
-
 install(DIRECTORY include/ DESTINATION include)
