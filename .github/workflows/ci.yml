@@ -41,6 +41,8 @@ jobs:
           cmake -S . -B build
           -DCMAKE_BUILD_TYPE=Release
           -DFUNCTIONPARSER_WERROR=ON
+          -DBUILD_EXAMPLES=ON
+          -DFUNCTIONPARSER_BUILD_BENCHMARKS=ON
 
       - name: Compilar
         run: cmake --build build --config Release --parallel

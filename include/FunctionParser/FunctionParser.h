@@ -4,7 +4,4 @@
 #include <FunctionParser/Point.h>
 #include <FunctionParser/Range.h> 
 
-#define FUNCTIONPARSER_VERSION_MAJOR 1
-#define FUNCTIONPARSER_VERSION_MINOR 1
-#define FUNCTIONPARSER_VERSION_PATCH 0
-#define FUNCTIONPARSER_VERSION_STRING "1.1.0"
+#include <FunctionParser/Version.h> 

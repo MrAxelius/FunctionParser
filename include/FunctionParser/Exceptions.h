@@ -8,7 +8,7 @@ namespace FunctionParser
 {
     inline namespace v1
     {
-        // Envuelve todo, así solo necesita 1 catch
+        // Wrapper, only 1 catch needed
         struct LibraryException : std::runtime_error
         {
             explicit LibraryException(const std::string &message)
@@ -21,8 +21,8 @@ namespace FunctionParser
         };
         struct ExpressionError : LibraryException
         {
-            size_t position;
-            explicit ExpressionError(const std::string &message, size_t position)
+            std::size_t position;
+            explicit ExpressionError(const std::string &message, std::size_t position)
                 : LibraryException(message), position(position) {}
         };
     }

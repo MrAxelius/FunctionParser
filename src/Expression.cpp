@@ -1,5 +1,6 @@
 #include <FunctionParser/Expression.h>
 #include <memory>
+#include <cmath>
 
 #include "Nodo.h"
 #include "Parser/Parser.h"

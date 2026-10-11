@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(FunctionParser VERSION 1.1.0 LANGUAGES CXX)
+project(FunctionParser VERSION 1.1.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -45,13 +45,18 @@ add_library(FunctionParser
     src/Parser/Parser.cpp
     src/Expression.cpp
 )
-
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/FunctionParser/Version.h
+    @ONLY
+)
 target_link_libraries(FunctionParser PRIVATE fp_avisos)
 
 # Directorios de inclusión públicos
 target_include_directories(FunctionParser
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
     $<INSTALL_INTERFACE:include>
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -109,4 +114,6 @@ if(BUILD_TESTS)
     catch_discover_tests(parser_tests)
     catch_discover_tests(api_tests)
 endif()
+
 install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated/ DESTINATION include)
